@@ -1,4 +1,4 @@
-module logger
+module github.com/caiwp/go-logger
 
 go 1.17
 
