@@ -1,2 +1,2 @@
-# go-logger
+# Logger
 golang logger with zap
