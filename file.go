@@ -41,7 +41,7 @@ func NewFileLogger(path, name string, size, backup, age int) (*zap.Logger, error
 		MaxBackups: backup,
 		MaxAge:     age, // days
 		LocalTime:  true,
-		Compress:   false,
+		Compress:   true,
 	})
 	totalSync := zapcore.AddSync(&lumberjack.Logger{
 		Filename:   filepath.Join(path, name+".log"),
@@ -49,7 +49,7 @@ func NewFileLogger(path, name string, size, backup, age int) (*zap.Logger, error
 		MaxBackups: backup,
 		MaxAge:     age, // days
 		LocalTime:  true,
-		Compress:   false,
+		Compress:   true,
 	})
 
 	high := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
@@ -63,7 +63,7 @@ func NewFileLogger(path, name string, size, backup, age int) (*zap.Logger, error
 		zapcore.NewCore(zapcore.NewConsoleEncoder(ec), highSync, high),
 		zapcore.NewCore(zapcore.NewConsoleEncoder(ec), totalSync, total),
 	)
-	return zap.New(core), nil
+	return zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1)), nil
 }
 
 func callerEncoder(caller zapcore.EntryCaller, enc zapcore.PrimitiveArrayEncoder) {
