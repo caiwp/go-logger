@@ -12,7 +12,7 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-func NewFileLogger(path, name string, size, backup, age int) (*zap.Logger, error) {
+func NewFileLogger(path, name string, size, backup, age, skip int) (*zap.Logger, error) {
 	if _, err := os.Stat(path); !os.IsNotExist(err) {
 		err = os.MkdirAll(path, os.ModePerm)
 		if err != nil {
@@ -36,7 +36,7 @@ func NewFileLogger(path, name string, size, backup, age int) (*zap.Logger, error
 	}
 
 	highSync := zapcore.AddSync(&lumberjack.Logger{
-		Filename:   filepath.Join(path, "err."+name+".log"),
+		Filename:   filepath.Join(path, "error."+name+".log"),
 		MaxSize:    size, // megabytes
 		MaxBackups: backup,
 		MaxAge:     age, // days
@@ -63,7 +63,7 @@ func NewFileLogger(path, name string, size, backup, age int) (*zap.Logger, error
 		zapcore.NewCore(zapcore.NewConsoleEncoder(ec), highSync, high),
 		zapcore.NewCore(zapcore.NewConsoleEncoder(ec), totalSync, total),
 	)
-	return zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1)), nil
+	return zap.New(core, zap.AddCaller(), zap.AddCallerSkip(skip)), nil
 }
 
 func callerEncoder(caller zapcore.EntryCaller, enc zapcore.PrimitiveArrayEncoder) {
