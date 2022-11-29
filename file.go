@@ -12,7 +12,7 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-func NewFileLogger(path, name string, size, backup, age, skip int) (*zap.Logger, error) {
+func NewFileLogger(path, name string, size, backup, age, skip, level int) (*zap.Logger, error) {
 	if _, err := os.Stat(path); !os.IsNotExist(err) {
 		err = os.MkdirAll(path, os.ModePerm)
 		if err != nil {
@@ -56,7 +56,7 @@ func NewFileLogger(path, name string, size, backup, age, skip int) (*zap.Logger,
 		return lvl >= zapcore.WarnLevel
 	})
 	total := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
-		return lvl >= zapcore.DebugLevel
+		return lvl >= zapcore.Level(level)
 	})
 
 	core := zapcore.NewTee(
